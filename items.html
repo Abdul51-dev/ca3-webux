@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Items Management</title>
+    <link rel="stylesheet" href="items.css">
+</head>
+
+<body>
+
+    <h1>Items Management</h1>
+
+    <h2>Add New Item</h2>
+
+    <form>
+        <label for="item_id">Item ID:</label><br>
+        <input type="text" id="item_id" name="item_id" placeholder="Enter item ID"><br><br>
+
+        <label for="item_name">Item Name:</label><br>
+        <input type="text" id="item_name" name="item_name" placeholder="Enter item name"><br><br>
+
+        <label for="category">Category:</label><br>
+        <input type="text" id="category" name="category" placeholder="Enter category"><br><br>
+
+        <label for="price">Price:</label><br>
+        <input type="number" id="price" name="price" step="0.01" placeholder="Enter price"><br><br>
+
+        <label for="in_stock">In Stock:</label><br>
+        <select id="in_stock" name="in_stock">
+            <option value="">Select option</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select><br><br>
+
+        <input type="submit" value="Add Item">
+    </form>
+
+    <h2>Items List</h2>
+
+    <p><em>Just added some random placeholder data for now, will update it in later weeks when we connect the database.</em></p>
+
+    <table>
+        <caption>Items Table</caption>
+
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>In Stock</th>
+            </tr>
+        </thead>
+
+        <!-- Just added some random placeholder data for now, will update it later -->
+        <tbody>
+            <tr>
+                <td>I1</td>
+                <td>Mouse</td>
+                <td>Electronics</td>
+                <td>25.99</td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td>I2</td>
+                <td>Headphones</td>
+                <td>Electronics</td>
+                <td>59.99</td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td>I3</td>
+                <td>Gaming Chair</td>
+                <td>Furniture</td>
+                <td>149.50</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td>I4</td>
+                <td>PS5</td>
+                <td>Electronics</td>
+                <td>500.00</td>
+                <td>Yes</td>
+            </tr>
+            <tr>
+                <td>I5</td>
+                <td>iPad</td>
+                <td>Electronics</td>
+                <td>400.00</td>
+                <td>No</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
