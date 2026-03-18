@@ -1,0 +1,101 @@
+drop table if exists items cascade;
+drop table if exists foods cascade;
+drop table if exists records cascade;
+drop table if exists Items_Stock cascade;
+drop table if exists Food_Stock cascade;
+drop table if exists Records_Stock cascade;
+
+CREATE TABLE items (
+  Item_ID Varchar PRIMARY KEY,
+  Item_Name Varchar(30),
+  Category Varchar(30),
+  Price Decimal(10,2),
+  In_Stock boolean
+);
+
+INSERT INTO items (Item_ID, Item_Name, Category, Price, In_Stock) VALUES
+('I1', 'Mouse', 'Electronics', 25.99, 'Yes'),
+('I2', 'Headphones', 'Electronics', 59.99, 'Yes'),
+('I3', 'gaming Chair', 'Furniture', 149.50, 'No'),
+('I4', 'ps5', 'Electronics', 500, 'Yes'),
+('I5', 'ipad', 'Electronics', 400, 'No');
+
+
+
+CREATE TABLE foods (
+  Food_ID Varchar PRIMARY KEY,
+  Food_Name Varchar(30),
+  Vegitarian boolean,
+  Price Decimal(10,2),
+  In_Stock boolean
+);
+
+INSERT INTO foods (Food_ID, Food_Name, Vegitarian, Price, In_Stock) VALUES
+('F1', 'Rice', 'Yes', 25.99, 'Yes'),
+('F2', 'Meat Jelly', 'No', 59.99, 'Yes'),
+('F3', 'Meat Pie', 'NO', 149.50, 'No'),
+('F4', 'Chicken', 'NO', 500, 'Yes'),
+('F5', 'Egusi Soup', 'No', 400, 'No');
+
+
+CREATE TABLE records (
+  R_ID Varchar PRIMARY KEY,
+  R_Name Varchar(30),
+  Main_Artist Varchar(30),
+  Price Decimal(10,2),
+  In_Stock boolean
+);
+
+INSERT INTO records (R_ID, R_Name, Main_Artist, Price, In_Stock) VALUES
+('R1', 'Illmatic', 'Nas', 25.99, 'Yes'),
+('R2', 'Life of a Showgirl', 'Taylor Swift', 59.99, 'No'),
+('R3', 'To Pimp A Butterfly', 'Kendrick Lamar', 149.50, 'Yes'),
+('R4', 'Welcome to O Block', 'King Von', 500, 'Yes'),
+('R5', 'Ultraviolence', 'Lana Del Ray', 400, 'No');
+
+
+CREATE TABLE Items_Stock (
+  Item_ID Varchar(30),
+  Item_Name Varchar(30),
+  I_Amount_of_Stock INT,
+  FOREIGN KEY (Item_ID) REFERENCES items(Item_ID)
+);
+
+INSERT INTO Items_Stock (Item_ID, Item_Name, I_Amount_of_Stock) VALUES
+('I1', 'Mouse', 25),
+('I2', 'Headphones',59),
+('I3', 'gaming Chair', 0),
+('I4', 'ps5', 5),
+('I5', 'ipad', 0);
+
+CREATE TABLE Food_Stock (
+  Food_ID Varchar(30),
+  Food_Name Varchar(30),
+  F_Amount_of_Stock int,
+  FOREIGN KEY (Food_ID) REFERENCES foods(Food_ID)
+);
+
+INSERT INTO Food_Stock (Food_ID, Food_Name, F_Amount_of_Stock) VALUES
+('F1', 'Rice', 25),
+('F2', 'Meat Jelly', 59),
+('F3', 'Meat Pie', 0),
+('F4', 'Chicken', 50),
+('F5', 'Egusi Soup', 0);
+
+
+CREATE TABLE Records_Stock (
+  R_ID Varchar(30),
+  Name Varchar(30),
+  R_Amount_of_Stock int,
+  FOREIGN KEY (R_ID) REFERENCES records(R_ID)
+);
+INSERT INTO Records_Stock (R_ID, Name, R_Amount_of_Stock) VALUES
+('R1', 'Illmatic', 4),
+('R2', 'Life of a Showgirl', 0),
+('R3', 'To Pimp A Butterfly', 149),
+('R4', 'Welcome to O Block', 500),
+('R5', 'Ultraviolence', 0);
+  
+  select * from items
+  join items_stock on items.item_id=items_stock.item_id
+
