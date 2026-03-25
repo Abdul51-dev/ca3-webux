@@ -12,36 +12,33 @@
 
     <h2>Add New Item</h2>
 
-    <form>
-        <label for="item_id">Item ID:</label><br>
-        <input type="text" id="item_id" name="item_id" placeholder="e.g. I6"><br><br>
+    <form id="itemForm">
+        <label>Item ID:</label>
+        <input type="text" id="itemId" placeholder="e.g. I6" required>
 
-        <label for="item_name">Item Name:</label><br>
-        <input type="text" id="item_name" name="item_name" placeholder="Enter item name"><br><br>
+        <label>Item Name:</label>
+        <input type="text" id="itemName" placeholder="Enter item name" required>
 
-        <label for="category">Category:</label><br>
-        <input type="text" id="category" name="category" placeholder="Enter category"><br><br>
+        <label>Category:</label>
+        <input type="text" id="category" placeholder="Enter category" required>
 
-        <label for="price">Price:</label><br>
-        <input type="number" id="price" name="price" step="0.01" placeholder="Enter price"><br><br>
+        <label>Price:</label>
+        <input type="number" id="price" placeholder="Enter price" required>
 
-        <label for="in_stock">In Stock:</label><br>
-        <select id="in_stock" name="in_stock">
+        <label>In Stock:</label>
+        <select id="stock">
             <option value="">Select option</option>
             <option value="Yes">Yes</option>
             <option value="No">No</option>
-        </select><br><br>
+        </select>
 
-        <input type="submit" value="Add Item">
+        <button type="submit">Add Item</button>
     </form>
 
     <h2>Items List</h2>
+    <p>This page is based on the items table from our SQL. The data below is currently sample data and will be connected properly later.</p>
 
-    <p><em>This page is based on the items table from our SQL. The data below is currently sample data from that table and can be connected properly later.</em></p>
-
-    <table>
-        <caption>Items Table</caption>
-
+    <table id="itemsTable">
         <thead>
             <tr>
                 <th>Item ID</th>
@@ -49,9 +46,9 @@
                 <th>Category</th>
                 <th>Price</th>
                 <th>In Stock</th>
+                <th>Action</th>
             </tr>
         </thead>
-
         <tbody>
             <tr>
                 <td>I1</td>
@@ -59,6 +56,7 @@
                 <td>Electronics</td>
                 <td>25.99</td>
                 <td>Yes</td>
+                <td><button onclick="deleteItem(this)">Delete</button></td>
             </tr>
             <tr>
                 <td>I2</td>
@@ -66,30 +64,56 @@
                 <td>Electronics</td>
                 <td>59.99</td>
                 <td>Yes</td>
+                <td><button onclick="deleteItem(this)">Delete</button></td>
             </tr>
             <tr>
                 <td>I3</td>
-                <td>gaming Chair</td>
+                <td>Gaming Chair</td>
                 <td>Furniture</td>
                 <td>149.50</td>
                 <td>No</td>
-            </tr>
-            <tr>
-                <td>I4</td>
-                <td>ps5</td>
-                <td>Electronics</td>
-                <td>500.00</td>
-                <td>Yes</td>
-            </tr>
-            <tr>
-                <td>I5</td>
-                <td>ipad</td>
-                <td>Electronics</td>
-                <td>400.00</td>
-                <td>No</td>
+                <td><button onclick="deleteItem(this)">Delete</button></td>
             </tr>
         </tbody>
     </table>
+
+    <script>
+        const form = document.getElementById("itemForm");
+        const table = document.getElementById("itemsTable").getElementsByTagName("tbody")[0];
+
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            let id = document.getElementById("itemId").value;
+            let name = document.getElementById("itemName").value;
+            let category = document.getElementById("category").value;
+            let price = document.getElementById("price").value;
+            let stock = document.getElementById("stock").value;
+
+            if (!id || !name || !category || !price || !stock) {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            let row = table.insertRow();
+
+            row.innerHTML = `
+                <td>${id}</td>
+                <td>${name}</td>
+                <td>${category}</td>
+                <td>${price}</td>
+                <td>${stock}</td>
+                <td><button onclick="deleteItem(this)">Delete</button></td>
+            `;
+
+            form.reset();
+        });
+
+        function deleteItem(button) {
+            let row = button.parentElement.parentElement;
+            row.remove();
+        }
+    </script>
 
 </body>
 </html>
