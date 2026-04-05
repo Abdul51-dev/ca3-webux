@@ -5,190 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Items Management</title>
     <link rel="stylesheet" href="items.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
 
-    <h1>Items Management</h1>
+<h1>Items Management</h1>
 
-    <h2>Add New Item</h2>
+<h2>Add / Edit Item</h2>
 
-    <form id="itemForm">
-        <label>Item ID:</label>
-        <input type="text" id="itemId" placeholder="e.g. I6" required>
+<form id="itemForm">
+    <input type="hidden" id="editingId">
 
-        <label>Item Name:</label>
-        <input type="text" id="itemName" placeholder="Enter item name" required>
+    <label>Item ID:</label>
+    <input type="text" id="itemId" required>
 
-        <label>Category:</label>
-        <input type="text" id="category" placeholder="Enter category" required>
+    <label>Item Name:</label>
+    <input type="text" id="itemName" required>
 
-        <label>Price:</label>
-        <input type="number" id="price" placeholder="Enter price" required>
+    <label>Category:</label>
+    <input type="text" id="category">
 
-        <label>In Stock:</label>
-        <select id="stock">
-            <option value="">Select option</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select>
+    <label>Price:</label>
+    <input type="number" id="price" required>
 
-        <button type="submit" id="submitBtn">Add Item</button>
-    </form>
+    <label>In Stock:</label>
+    <select id="stock" required>
+        <option value="">Select</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+    </select>
 
-    <h2>Items List</h2>
-    <p>This page is based on the items table from our SQL. The data below is currently sample data and will be integrated with the database in later stages.</p>
+    <button type="submit" id="submitBtn">Add Item</button>
+</form>
 
-    <table id="itemsTable">
-        <thead>
-            <tr>
-                <th>Item ID</th>
-                <th>Item Name</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>In Stock</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>I1</td>
-                <td>Mouse</td>
-                <td>Electronics</td>
-                <td>€25.99</td>
-                <td>Yes</td>
-                <td>
-                    <button type="button" onclick="editItem(this)">Edit</button>
-                    <button type="button" onclick="deleteItem(this)">Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td>I2</td>
-                <td>Headphones</td>
-                <td>Electronics</td>
-                <td>€59.99</td>
-                <td>Yes</td>
-                <td>
-                    <button type="button" onclick="editItem(this)">Edit</button>
-                    <button type="button" onclick="deleteItem(this)">Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td>I3</td>
-                <td>Gaming Chair</td>
-                <td>Furniture</td>
-                <td>€149.50</td>
-                <td>No</td>
-                <td>
-                    <button type="button" onclick="editItem(this)">Edit</button>
-                    <button type="button" onclick="deleteItem(this)">Delete</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<h2>Items List</h2>
 
-    <script>
-        const form = document.getElementById("itemForm");
-        const table = document.getElementById("itemsTable").getElementsByTagName("tbody")[0];
-        const submitBtn = document.getElementById("submitBtn");
+<table id="itemsTable">
+    <thead>
+        <tr>
+            <th>Item ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
-        let editingRow = null;
+<script>
+// connect to supabase
+const client = supabase.createClient(
+    "https://sjxpsfgxngsowdvrstrt.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqeHBzZmd4bmdzb3dkdnJzdHJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTQwODQsImV4cCI6MjA5MDk3MDA4NH0.ZREXklbIesukIqHpMYb5CtBX_wxR5CoCAEuTtKNVg5w"
+);
 
-        function resetEditMode() {
-            editingRow = null;
-            submitBtn.textContent = "Add Item";
-            form.reset();
-        }
+const form = document.getElementById("itemForm");
+const table = document.querySelector("#itemsTable tbody");
+const submitBtn = document.getElementById("submitBtn");
+const editingId = document.getElementById("editingId");
 
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
+// LOAD ITEMS
+async function loadItems() {
+    table.innerHTML = "";
 
-            let id = document.getElementById("itemId").value.trim();
-            let name = document.getElementById("itemName").value.trim();
-            let category = document.getElementById("category").value.trim();
-            let price = document.getElementById("price").value.trim();
-            let stock = document.getElementById("stock").value;
+    let { data, error } = await client.from("items").select("*");
 
-            if (!id || !name || !category || !price || !stock) {
-                alert("Please fill in all fields");
-                return;
-            }
+    if (error) {
+        table.innerHTML = "<tr><td colspan='6'>Error loading data</td></tr>";
+        return;
+    }
 
-            if (editingRow) {
-                editingRow.innerHTML = `
-                    <td>${id}</td>
-                    <td>${name}</td>
-                    <td>${category}</td>
-                    <td>€${parseFloat(price).toFixed(2)}</td>
-                    <td>${stock}</td>
-                    <td>
-                        <button type="button" onclick="editItem(this)">Edit</button>
-                        <button type="button" onclick="deleteItem(this)">Delete</button>
-                    </td>
-                `;
-            } else {
-                let row = table.insertRow();
+    data.forEach(item => {
 
-                row.innerHTML = `
-                    <td>${id}</td>
-                    <td>${name}</td>
-                    <td>${category}</td>
-                    <td>€${parseFloat(price).toFixed(2)}</td>
-                    <td>${stock}</td>
-                    <td>
-                        <button type="button" onclick="editItem(this)">Edit</button>
-                        <button type="button" onclick="deleteItem(this)">Delete</button>
-                    </td>
-                `;
-            }
+        let id = item.item_id || item.id || item.Item_ID;
+        let name = item.item_name || item.name || item.Item_Name;
+        let price = item.price || item.Price;
+        let stock = item.in_stock ?? item.stock ?? item.In_Stock;
 
-            resetEditMode();
-        });
+        let row = document.createElement("tr");
 
-        function editItem(button) {
-            let row = button.parentElement.parentElement;
+        row.innerHTML = `
+            <td>${id}</td>
+            <td>${name}</td>
+            <td>-</td>
+            <td>€${price}</td>
+            <td>${stock == true || stock == "Yes" || stock == 1 ? "Yes" : "No"}</td>
+            <td>
+                <button onclick="editItem('${id}', '${name}', '${price}', '${stock}')">Edit</button>
+                <button onclick="deleteItem('${id}')">Delete</button>
+            </td>
+        `;
 
-            // if clicking the same row again, cancel edit mode
-            if (editingRow === row) {
-                resetEditMode();
-                return;
-            }
+        table.appendChild(row);
+    });
+}
 
-            let id = row.cells[0].innerText;
-            let name = row.cells[1].innerText;
-            let category = row.cells[2].innerText;
-            let price = row.cells[3].innerText.replace("€", "");
-            let stock = row.cells[4].innerText;
+// ADD OR UPDATE
+form.addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-            document.getElementById("itemId").value = id;
-            document.getElementById("itemName").value = name;
-            document.getElementById("category").value = category;
-            document.getElementById("price").value = price;
-            document.getElementById("stock").value = stock;
+    let id = document.getElementById("itemId").value;
+    let name = document.getElementById("itemName").value;
+    let category = document.getElementById("category").value;
+    let price = document.getElementById("price").value;
+    let stock = document.getElementById("stock").value === "true";
 
-            editingRow = row;
-            submitBtn.textContent = "Update Item";
-        }
+    if (editingId.value) {
+        // UPDATE
+        await client.from("items")
+            .update({
+                item_name: name,
+                price: price,
+                in_stock: stock
+            })
+            .eq("item_id", editingId.value);
 
-        function deleteItem(button) {
-            let row = button.parentElement.parentElement;
+        submitBtn.textContent = "Add Item";
+        editingId.value = "";
+    } else {
+        // ADD
+        await client.from("items").insert([{
+            item_id: id,
+            item_name: name,
+            price: price,
+            in_stock: stock
+        }]);
+    }
 
-            if (editingRow === row) {
-                resetEditMode();
-            }
+    form.reset();
+    loadItems();
+});
 
-            row.remove();
-        }
+// DELETE
+async function deleteItem(id) {
+    await client.from("items").delete().eq("item_id", id);
+    loadItems();
+}
 
-        // click anywhere outside form and outside edit buttons to cancel editing
-        document.addEventListener("click", function(e) {
-            const clickedInsideForm = form.contains(e.target);
-            const clickedEditButton = e.target.tagName === "BUTTON" && e.target.textContent.trim() === "Edit";
+// EDIT
+function editItem(id, name, price, stock) {
+    document.getElementById("itemId").value = id;
+    document.getElementById("itemName").value = name;
+    document.getElementById("price").value = price;
+    document.getElementById("stock").value = (stock == true || stock == "Yes" || stock == 1) ? "true" : "false";
 
-            if (!clickedInsideForm && !clickedEditButton && editingRow !== null) {
-                resetEditMode();
-            }
-        });
-    </script>
+    editingId.value = id;
+    submitBtn.textContent = "Update Item";
+}
+
+// LOAD ON START
+loadItems();
+</script>
 
 </body>
 </html>
