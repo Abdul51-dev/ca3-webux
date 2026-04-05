@@ -1,0 +1,3 @@
+Supabase Link: https://sjxpsfgxngsowdvrstrt.supabase.co
+Supabase anon key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqeHBzZmd4bmdzb3dkdnJzdHJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTQwODQsImV4cCI6MjA5MDk3MDA4NH0.ZREXklbIesukIqHpMYb5CtBX_wxR5CoCAEuTtKNVg5w
+Supabase URL: https://supabase.com/dashboard/project/sjxpsfgxngsowdvrstrt/
