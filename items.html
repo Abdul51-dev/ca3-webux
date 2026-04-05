@@ -32,11 +32,11 @@
             <option value="No">No</option>
         </select>
 
-        <button type="submit">Add Item</button>
+        <button type="submit" id="submitBtn">Add Item</button>
     </form>
 
     <h2>Items List</h2>
-    <p>This page is based on the items table from our SQL. The data below is currently sample data and will be connected properly later.</p>
+    <p>This page is based on the items table from our SQL. The data below is currently sample data and will be integrated with the database in later stages.</p>
 
     <table id="itemsTable">
         <thead>
@@ -46,7 +46,7 @@
                 <th>Category</th>
                 <th>Price</th>
                 <th>In Stock</th>
-                <th>Action</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -54,25 +54,34 @@
                 <td>I1</td>
                 <td>Mouse</td>
                 <td>Electronics</td>
-                <td>25.99</td>
+                <td>€25.99</td>
                 <td>Yes</td>
-                <td><button onclick="deleteItem(this)">Delete</button></td>
+                <td>
+                    <button type="button" onclick="editItem(this)">Edit</button>
+                    <button type="button" onclick="deleteItem(this)">Delete</button>
+                </td>
             </tr>
             <tr>
                 <td>I2</td>
                 <td>Headphones</td>
                 <td>Electronics</td>
-                <td>59.99</td>
+                <td>€59.99</td>
                 <td>Yes</td>
-                <td><button onclick="deleteItem(this)">Delete</button></td>
+                <td>
+                    <button type="button" onclick="editItem(this)">Edit</button>
+                    <button type="button" onclick="deleteItem(this)">Delete</button>
+                </td>
             </tr>
             <tr>
                 <td>I3</td>
                 <td>Gaming Chair</td>
                 <td>Furniture</td>
-                <td>149.50</td>
+                <td>€149.50</td>
                 <td>No</td>
-                <td><button onclick="deleteItem(this)">Delete</button></td>
+                <td>
+                    <button type="button" onclick="editItem(this)">Edit</button>
+                    <button type="button" onclick="deleteItem(this)">Delete</button>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -80,14 +89,23 @@
     <script>
         const form = document.getElementById("itemForm");
         const table = document.getElementById("itemsTable").getElementsByTagName("tbody")[0];
+        const submitBtn = document.getElementById("submitBtn");
+
+        let editingRow = null;
+
+        function resetEditMode() {
+            editingRow = null;
+            submitBtn.textContent = "Add Item";
+            form.reset();
+        }
 
         form.addEventListener("submit", function(e) {
             e.preventDefault();
 
-            let id = document.getElementById("itemId").value;
-            let name = document.getElementById("itemName").value;
-            let category = document.getElementById("category").value;
-            let price = document.getElementById("price").value;
+            let id = document.getElementById("itemId").value.trim();
+            let name = document.getElementById("itemName").value.trim();
+            let category = document.getElementById("category").value.trim();
+            let price = document.getElementById("price").value.trim();
             let stock = document.getElementById("stock").value;
 
             if (!id || !name || !category || !price || !stock) {
@@ -95,24 +113,81 @@
                 return;
             }
 
-            let row = table.insertRow();
+            if (editingRow) {
+                editingRow.innerHTML = `
+                    <td>${id}</td>
+                    <td>${name}</td>
+                    <td>${category}</td>
+                    <td>€${parseFloat(price).toFixed(2)}</td>
+                    <td>${stock}</td>
+                    <td>
+                        <button type="button" onclick="editItem(this)">Edit</button>
+                        <button type="button" onclick="deleteItem(this)">Delete</button>
+                    </td>
+                `;
+            } else {
+                let row = table.insertRow();
 
-            row.innerHTML = `
-                <td>${id}</td>
-                <td>${name}</td>
-                <td>${category}</td>
-                <td>${price}</td>
-                <td>${stock}</td>
-                <td><button onclick="deleteItem(this)">Delete</button></td>
-            `;
+                row.innerHTML = `
+                    <td>${id}</td>
+                    <td>${name}</td>
+                    <td>${category}</td>
+                    <td>€${parseFloat(price).toFixed(2)}</td>
+                    <td>${stock}</td>
+                    <td>
+                        <button type="button" onclick="editItem(this)">Edit</button>
+                        <button type="button" onclick="deleteItem(this)">Delete</button>
+                    </td>
+                `;
+            }
 
-            form.reset();
+            resetEditMode();
         });
+
+        function editItem(button) {
+            let row = button.parentElement.parentElement;
+
+            // if clicking the same row again, cancel edit mode
+            if (editingRow === row) {
+                resetEditMode();
+                return;
+            }
+
+            let id = row.cells[0].innerText;
+            let name = row.cells[1].innerText;
+            let category = row.cells[2].innerText;
+            let price = row.cells[3].innerText.replace("€", "");
+            let stock = row.cells[4].innerText;
+
+            document.getElementById("itemId").value = id;
+            document.getElementById("itemName").value = name;
+            document.getElementById("category").value = category;
+            document.getElementById("price").value = price;
+            document.getElementById("stock").value = stock;
+
+            editingRow = row;
+            submitBtn.textContent = "Update Item";
+        }
 
         function deleteItem(button) {
             let row = button.parentElement.parentElement;
+
+            if (editingRow === row) {
+                resetEditMode();
+            }
+
             row.remove();
         }
+
+        // click anywhere outside form and outside edit buttons to cancel editing
+        document.addEventListener("click", function(e) {
+            const clickedInsideForm = form.contains(e.target);
+            const clickedEditButton = e.target.tagName === "BUTTON" && e.target.textContent.trim() === "Edit";
+
+            if (!clickedInsideForm && !clickedEditButton && editingRow !== null) {
+                resetEditMode();
+            }
+        });
     </script>
 
 </body>

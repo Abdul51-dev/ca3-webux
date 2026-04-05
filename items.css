@@ -3,11 +3,18 @@ body {
     margin: 20px;
 }
 
+/* HEADINGS */
 h1, h2 {
     color: rgb(20, 85, 228);
     text-align: center;
 }
 
+/* PARAGRAPH */
+p {
+    text-align: center;
+}
+
+/* FORM */
 form {
     width: 60%;
     margin: 20px auto;
@@ -17,6 +24,7 @@ form {
     background-color: white;
 }
 
+/* INPUTS */
 input, select {
     width: 100%;
     padding: 8px;
@@ -25,19 +33,23 @@ input, select {
     border-radius: 5px;
 }
 
-button {
+/* FORM BUTTON (CENTERED) */
+form button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
     background-color: rgb(20, 85, 228);
     color: white;
-    padding: 10px;
     border: none;
-    width: 100%;
     cursor: pointer;
 }
 
+/* GENERAL BUTTON */
 button:hover {
     opacity: 0.9;
 }
 
+/* TABLE */
 table {
     width: 80%;
     margin: 30px auto;
@@ -45,12 +57,26 @@ table {
     border: 3px solid rgb(20, 85, 228);
 }
 
+/* TABLE CELLS */
 th, td {
     border: 1px solid black;
     padding: 10px;
     text-align: center;
 }
 
+/* TABLE HEADER */
 th {
     background-color: #f2f2f2;
+}
+
+/* TABLE BUTTONS (EDIT / DELETE) */
+td button {
+    display: block;
+    width: 90px;
+    margin: 5px auto;
+    padding: 6px;
+    background-color: rgb(20, 85, 228);
+    color: white;
+    border: none;
+    cursor: pointer;
 }
