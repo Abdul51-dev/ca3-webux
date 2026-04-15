@@ -4,191 +4,242 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Items Management</title>
-
     <link rel="stylesheet" href="items.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
-
 <body>
 
-<h1>Items Management</h1>
-<h2>Add / Edit Item</h2>
+    <h1>Items Management</h1>
+    <h2>Add / Edit Item</h2>
 
-<form id="itemForm">
-    <input type="hidden" id="editingId">
+    <form id="itemForm">
+        <input type="hidden" id="editingId">
 
-    <label>Item ID:</label>
-    <input type="text" id="itemId" required>
+        <label for="itemId">Item ID:</label>
+        <input type="number" id="itemId" required>
 
-    <label>Item Name:</label>
-    <input type="text" id="itemName" required>
+        <label for="itemName">Item Name:</label>
+        <input type="text" id="itemName" required>
 
-    <label>Category:</label>
-    <input type="text" id="category" placeholder="Not linked yet">
+        <label for="category">Category ID:</label>
+        <input type="number" id="category" required>
 
-    <label>Price:</label>
-    <input type="number" id="price" required>
+        <label for="price">Price:</label>
+        <input type="number" id="price" step="0.01" required>
 
-    <label>In Stock:</label>
-    <select id="stock" required>
-        <option value="">Select</option>
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-    </select>
+        <label for="stock">In Stock:</label>
+        <select id="stock" required>
+            <option value="">Select</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
 
-    <button type="submit" id="submitBtn">Add Item</button>
-</form>
+        <button type="submit" id="submitBtn">Add Item</button>
+    </form>
 
-<h2>Items List</h2>
+    <h2>Items List</h2>
 
-<table id="itemsTable">
-    <thead>
-        <tr>
-            <th>Item ID</th>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td colspan="6">Loading data...</td></tr>
-    </tbody>
-</table>
+    <table id="itemsTable">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="6">Loading data...</td>
+            </tr>
+        </tbody>
+    </table>
 
-<script>
+    <script>
+        const client = supabase.createClient(
+            "https://sjxpsfgxngsowdvrstrt.supabase.co",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqeHBzZmd4bmdzb3dkdnJzdHJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTQwODQsImV4cCI6MjA5MDk3MDA4NH0.ZREXklbIesukIqHpMYb5CtBX_wxR5CoCAEuTtKNVg5w"
+        );
 
-// CLIENT
-const client = supabase.createClient(
-    "https://sjxpsfgxngsowdvrstrt.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqeHBzZmd4bmdzb3dkdnJzdHJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTQwODQsImV4cCI6MjA5MDk3MDA4NH0.ZREXklbIesukIqHpMYb5CtBX_wxR5CoCAEuTtKNVg5w"
-);
+        const form = document.getElementById("itemForm");
+        const tableBody = document.querySelector("#itemsTable tbody");
+        const submitBtn = document.getElementById("submitBtn");
+        const editingId = document.getElementById("editingId");
 
-const form = document.getElementById("itemForm");
-const tableBody = document.querySelector("#itemsTable tbody");
-const submitBtn = document.getElementById("submitBtn");
-const editingId = document.getElementById("editingId");
-
-// LOAD ITEMS
-async function loadItems() {
-    tableBody.innerHTML = "<tr><td colspan='6'>Loading data...</td></tr>";
-
-    try {
-        const { data, error } = await client.from("items").select("*");
-
-        if (error) {
-            tableBody.innerHTML = "<tr><td colspan='6'>Error loading data</td></tr>";
-            return;
+        function stockBadge(quantity) {
+            return quantity > 0
+                ? '<span class="badge-yes">Yes</span>'
+                : '<span class="badge-no">No</span>';
         }
 
-        if (!data || data.length === 0) {
-            tableBody.innerHTML = "<tr><td colspan='6'>No items found</td></tr>";
-            return;
+        function stockToQuantity(stockValue) {
+            return stockValue === "true" ? 1 : 0;
         }
 
-        tableBody.innerHTML = "";
+        function safeText(value) {
+            if (value === null || value === undefined) {
+                return "";
+            }
+            return String(value)
+                .replace(/\\/g, "\\\\")
+                .replace(/'/g, "\\'");
+        }
 
-        data.forEach(item => {
-            const id = item.item_id || item.Item_ID || "";
-            const name = item.item_name || item.Item_Name || "";
-            const category = item.category || item.Category || "-";
-            const price = item.price || item.Price || "";
-            const stock = item.in_stock ?? item.In_Stock ?? false;
+        async function loadItems() {
+            tableBody.innerHTML = "<tr><td colspan='6'>Loading data...</td></tr>";
 
-            const badge = stock ? "badge-yes" : "badge-no";
-            const stockText = stock ? "Yes" : "No";
+            try {
+                const { data, error } = await client
+                    .from("items")
+                    .select("*")
+                    .order("id", { ascending: true });
 
-            const row = document.createElement("tr");
+                if (error) {
+                    tableBody.innerHTML = "<tr><td colspan='6'>Error: " + error.message + "</td></tr>";
+                    console.log(error);
+                    return;
+                }
 
-            row.innerHTML = `
-                <td>${id}</td>
-                <td>${name}</td>
-                <td>${category}</td>
-                <td>€${price}</td>
-                <td><span class="${badge}">${stockText}</span></td>
-                <td>
-                    <button onclick="editItem('${id}','${name}','${price}','${stock}')">Edit</button>
-                    <button onclick="deleteItem('${id}')">Delete</button>
-                </td>
-            `;
+                if (!data || data.length === 0) {
+                    tableBody.innerHTML = "<tr><td colspan='6'>No items found</td></tr>";
+                    return;
+                }
 
-            tableBody.appendChild(row);
+                tableBody.innerHTML = "";
+
+                data.forEach(item => {
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.category_id}</td>
+                        <td>€${parseFloat(item.price).toFixed(2)}</td>
+                        <td>${stockBadge(item.quantity)}</td>
+                        <td>
+                            <button type="button" onclick="editItem('${safeText(item.id)}', '${safeText(item.name)}', '${safeText(item.category_id)}', '${safeText(item.price)}', '${safeText(item.quantity)}')">Edit</button>
+                            <button type="button" onclick="deleteItem('${safeText(item.id)}')">Delete</button>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            } catch (err) {
+                tableBody.innerHTML = "<tr><td colspan='6'>Error: " + err.message + "</td></tr>";
+                console.log(err);
+            }
+        }
+
+        form.addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const id = document.getElementById("itemId").value.trim();
+            const name = document.getElementById("itemName").value.trim();
+            const category = document.getElementById("category").value.trim();
+            const price = document.getElementById("price").value.trim();
+            const stock = document.getElementById("stock").value;
+
+            if (!id || !name || !category || !price || stock === "") {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            if (parseFloat(price) <= 0) {
+                alert("Price must be greater than 0");
+                return;
+            }
+
+            const quantity = stockToQuantity(stock);
+
+            try {
+                if (editingId.value) {
+                    const { error } = await client
+                        .from("items")
+                        .update({
+                            name: name,
+                            price: price,
+                            quantity: quantity,
+                            category_id: category
+                        })
+                        .eq("id", editingId.value);
+
+                    if (error) {
+                        alert("Update error: " + error.message);
+                        console.log(error);
+                        return;
+                    }
+
+                    editingId.value = "";
+                    submitBtn.textContent = "Add Item";
+                } else {
+                    const { error } = await client
+                        .from("items")
+                        .insert([{
+                            id: id,
+                            sku: "I" + id,
+                            name: name,
+                            description: name,
+                            price: price,
+                            quantity: quantity,
+                            category_id: category
+                        }]);
+
+                    if (error) {
+                        alert("Insert error: " + error.message);
+                        console.log(error);
+                        return;
+                    }
+                }
+
+                form.reset();
+                loadItems();
+            } catch (err) {
+                alert("Error: " + err.message);
+                console.log(err);
+            }
         });
 
-    } catch (err) {
-        tableBody.innerHTML = "<tr><td colspan='6'>Connection error</td></tr>";
-    }
-}
+        async function deleteItem(id) {
+            try {
+                const { error } = await client
+                    .from("items")
+                    .delete()
+                    .eq("id", id);
 
-// ADD / UPDATE
-form.addEventListener("submit", async function(e) {
-    e.preventDefault();
+                if (error) {
+                    alert("Delete error: " + error.message);
+                    console.log(error);
+                    return;
+                }
 
-    const id = document.getElementById("itemId").value;
-    const name = document.getElementById("itemName").value;
-    const category = document.getElementById("category").value;
-    const price = document.getElementById("price").value;
-    const stock = document.getElementById("stock").value === "true";
+                if (editingId.value === id) {
+                    editingId.value = "";
+                    form.reset();
+                    submitBtn.textContent = "Add Item";
+                }
 
-    // ✅ VALIDATION (NEW)
-    if (price <= 0) {
-        alert("Price must be greater than 0");
-        return;
-    }
+                loadItems();
+            } catch (err) {
+                alert("Error: " + err.message);
+                console.log(err);
+            }
+        }
 
-    if (!id || !name) {
-        alert("Fill all required fields");
-        return;
-    }
+        function editItem(id, name, category, price, quantity) {
+            document.getElementById("itemId").value = id;
+            document.getElementById("itemName").value = name;
+            document.getElementById("category").value = category;
+            document.getElementById("price").value = price;
+            document.getElementById("stock").value = Number(quantity) > 0 ? "true" : "false";
 
-    if (editingId.value) {
-        await client.from("items")
-            .update({
-                item_name: name,
-                price: price,
-                in_stock: stock
-            })
-            .eq("item_id", editingId.value);
+            editingId.value = id;
+            submitBtn.textContent = "Update Item";
+        }
 
-        submitBtn.textContent = "Add Item";
-        editingId.value = "";
-
-    } else {
-        await client.from("items").insert([{
-            item_id: id,
-            item_name: name,
-            category: category,
-            price: price,
-            in_stock: stock
-        }]);
-    }
-
-    form.reset();
-    loadItems();
-});
-
-// DELETE
-async function deleteItem(id) {
-    await client.from("items").delete().eq("item_id", id);
-    loadItems();
-}
-
-// EDIT
-function editItem(id, name, price, stock) {
-    document.getElementById("itemId").value = id;
-    document.getElementById("itemName").value = name;
-    document.getElementById("price").value = price;
-    document.getElementById("stock").value = stock ? "true" : "false";
-
-    editingId.value = id;
-    submitBtn.textContent = "Update Item";
-}
-
-// RUN
-loadItems();
-
-</script>
+        loadItems();
+    </script>
 
 </body>
 </html>
