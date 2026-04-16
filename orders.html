@@ -1,160 +1,194 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Orders — StockBase</title>
-<link rel="stylesheet" href="orders.css" />
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orders — StockBase</title>
+    <link rel="stylesheet" href="orders.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <a class="nav-brand" href="index.html">Stock<span>Base</span></a>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="items.html">Items</a></li>
+        <li><a href="orders.html" class="active">Orders</a></li>
+      </ul>
+    </nav>
 
-<!-- NAV -->
-<nav>
-<a class="nav-brand" href="index.html">Stock<span>Base</span></a>
-<ul>
-<li><a href="index.html">Home</a></li>
-<li><a href="items.html">Items</a></li>
-<li><a href="orders.html" class="active">Orders</a></li>
-</ul>
-</nav>
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <h1>Orders Management</h1>
+      <p>Create, edit and track all customer orders</p>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num" id="statTotal">—</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="statPending">—</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="statDone">—</div>
+          <div class="stat-label">Dispatched</div>
+        </div>
+      </div>
+    </div>
 
-<!-- PAGE HEADER -->
-<div class="page-header">
-<h1>Orders Management</h1>
-<p>Create, edit and track all customer orders</p>
-<div class="stats">
-<div class="stat">
-<div class="stat-num" id="statTotal">—</div>
-<div class="stat-label">Total</div>
-</div>
-<div class="stat">
-<div class="stat-num" id="statPending">—</div>
-<div class="stat-label">Pending</div>
-</div>
-<div class="stat">
-<div class="stat-num" id="statDone">—</div>
-<div class="stat-label">Dispatched</div>
-</div>
-</div>
-</div>
+    <!-- MAIN LAYOUT -->
+    <div class="layout">
+      <!-- FORM -->
+      <div class="card">
+        <div class="card-title" id="formTitle">New Order</div>
+        <form id="orderForm">
+          <input type="hidden" id="editingId" />
 
-<!-- MAIN LAYOUT -->
-<div class="layout">
+          <label>Order ID</label>
+          <input type="number" id="orderId" placeholder="e.g. 1001" required />
 
-<!-- FORM -->
-<div class="card">
-<div class="card-title" id="formTitle">New Order</div>
-<form id="orderForm">
-<input type="hidden" id="editingId" />
+          <div class="row2">
+            <div>
+              <label>Customer ID</label>
+              <input
+                type="number"
+                id="customerId"
+                placeholder="e.g. 42"
+                required
+              />
+            </div>
+            <div>
+              <label>Item ID</label>
+              <input type="number" id="itemId" placeholder="e.g. 7" required />
+            </div>
+          </div>
 
-<label>Order ID</label>
-<input type="number" id="orderId" placeholder="e.g. 1001" required />
+          <div class="row2">
+            <div>
+              <label>Quantity</label>
+              <input
+                type="number"
+                id="quantity"
+                min="1"
+                placeholder="1"
+                required
+              />
+            </div>
+            <div>
+              <label>Order Date</label>
+              <input type="date" id="orderDate" required />
+            </div>
+          </div>
 
-<div class="row2">
-<div>
-<label>Customer ID</label>
-<input type="number" id="customerId" placeholder="e.g. 42" required />
-</div>
-<div>
-<label>Item ID</label>
-<input type="number" id="itemId" placeholder="e.g. 7" required />
-</div>
-</div>
+          <label>Status</label>
+          <select id="status" required>
+            <option value="">Select status…</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="dispatched">Dispatched</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
 
-<div class="row2">
-<div>
-<label>Quantity</label>
-<input type="number" id="quantity" min="1" placeholder="1" required />
-</div>
-<div>
-<label>Order Date</label>
-<input type="date" id="orderDate" required />
-</div>
-</div>
+          <button type="submit" class="btn-submit" id="submitBtn">
+            Add Order
+          </button>
+          <button
+            type="button"
+            class="btn-cancel"
+            id="cancelBtn"
+            onclick="cancelEdit()"
+          >
+            Cancel
+          </button>
+        </form>
+      </div>
 
-<label>Status</label>
-<select id="status" required>
-<option value="">Select status…</option>
-<option value="pending">Pending</option>
-<option value="processing">Processing</option>
-<option value="completed">Completed</option>
-<option value="dispatched">Dispatched</option>
-<option value="cancelled">Cancelled</option>
-</select>
+      <!-- TABLE -->
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="toolbar-left">
+            <span class="table-label">All Orders</span>
+            <span class="count-pill" id="countPill">…</span>
+          </div>
+          <button class="btn-refresh" onclick="loadOrders()">↻ Refresh</button>
+        </div>
 
-<button type="submit" class="btn-submit" id="submitBtn">Add Order</button>
-<button type="button" class="btn-cancel" id="cancelBtn" onclick="cancelEdit()">Cancel</button>
-</form>
-</div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer</th>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr>
+              <td colspan="7" class="empty-cell">Loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-<!-- TABLE -->
-<div class="card">
-<div class="table-toolbar">
-<div class="toolbar-left">
-<span class="table-label">All Orders</span>
-<span class="count-pill" id="countPill">…</span>
-</div>
-<button class="btn-refresh" onclick="loadOrders()">↻ Refresh</button>
-</div>
+    <script>
+      // SUPABASE
+      const db = supabase.createClient(
+        "https://sjxpsfgxngsowdvrstrt.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqeHBzZmd4bmdzb3dkdnJzdHJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTQwODQsImV4cCI6MjA5MDk3MDA4NH0.ZREXklbIesukIqHpMYb5CtBX_wxR5CoCAEuTtKNVg5w",
+      );
 
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Customer</th>
-<th>Item</th>
-<th>Qty</th>
-<th>Date</th>
-<th>Status</th>
-<th>Actions</th>
-</tr>
-</thead>
-<tbody id="tableBody">
-<tr><td colspan="7" class="empty-cell">Loading…</td></tr>
-</tbody>
-</table>
-</div>
+      // BADGE HELPER
+      function badge(status) {
+        const labels = {
+          pending: "Pending",
+          processing: "Processing",
+          completed: "Completed",
+          dispatched: "Dispatched",
+          cancelled: "Cancelled",
+        };
+        return `<span class="badge badge-${status}">${labels[status] || status}</span>`;
+      }
 
-</div>
+      // LOAD ORDERS
+      async function loadOrders() {
+        document.getElementById("tableBody").innerHTML =
+          `<tr><td colspan="7" class="empty-cell">Loading…</td></tr>`;
 
-<script>
-// SUPABASE
-const db = supabase.createClient(
-"https://sjxpsfgxngsowdvrstrt.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqeHBzZmd4bmdzb3dkdnJzdHJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTQwODQsImV4cCI6MjA5MDk3MDA4NH0.ZREXklbIesukIqHpMYb5CtBX_wxR5CoCAEuTtKNVg5w"
-);
+        const { data, error } = await db.from("orders").select("*").order("id");
 
-// BADGE HELPER
-function badge(status) {
-const labels = { pending: "Pending", processing: "Processing", completed: "Completed", dispatched: "Dispatched", cancelled: "Cancelled" };
-return `<span class="badge badge-${status}">${labels[status] || status}</span>`;
-}
+        if (error) {
+          document.getElementById("tableBody").innerHTML =
+            `<tr><td colspan="7" class="empty-cell">Error: ${error.message}</td></tr>`;
+          return;
+        }
 
-// LOAD ORDERS
-async function loadOrders() {
-document.getElementById("tableBody").innerHTML = `<tr><td colspan="7" class="empty-cell">Loading…</td></tr>`;
+        // Update stats
+        document.getElementById("statTotal").textContent = data.length;
+        document.getElementById("statPending").textContent = data.filter(
+          (o) => o.status === "pending",
+        ).length;
+        document.getElementById("statDone").textContent = data.filter(
+          (o) => o.status === "dispatched",
+        ).length;
+        document.getElementById("countPill").textContent = data.length;
 
-const { data, error } = await db.from("orders").select("*").order("id");
+        if (data.length === 0) {
+          document.getElementById("tableBody").innerHTML =
+            `<tr><td colspan="7" class="empty-cell">No orders found</td></tr>`;
+          return;
+        }
 
-if (error) {
-document.getElementById("tableBody").innerHTML = `<tr><td colspan="7" class="empty-cell">Error: ${error.message}</td></tr>`;
-return;
-}
-
-// Update stats
-document.getElementById("statTotal").textContent = data.length;
-document.getElementById("statPending").textContent = data.filter(o => o.status === "pending").length;
-document.getElementById("statDone").textContent = data.filter(o => o.status === "dispatched").length;
-document.getElementById("countPill").textContent = data.length;
-
-if (data.length === 0) {
-document.getElementById("tableBody").innerHTML = `<tr><td colspan="7" class="empty-cell">No orders found</td></tr>`;
-return;
-}
-
-// Build rows
-document.getElementById("tableBody").innerHTML = data.map(o => `
+        // Build rows
+        document.getElementById("tableBody").innerHTML = data
+          .map(
+            (o) => `
 <tr>
 <td><span class="id-tag">${o.id}</span></td>
 <td>${o.customer_id}</td>
@@ -167,73 +201,102 @@ document.getElementById("tableBody").innerHTML = data.map(o => `
 <button class="btn-delete" onclick="deleteOrder(${o.id})">Delete</button>
 </td>
 </tr>
-`).join("");
-}
+`,
+          )
+          .join("");
+      }
 
-// ADD / UPDATE ORDER
-document.getElementById("orderForm").addEventListener("submit", async function(e) {
-e.preventDefault();
+      // ADD / UPDATE ORDER
+      document
+        .getElementById("orderForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-const id = document.getElementById("orderId").value;
-const customer = document.getElementById("customerId").value;
-const item = document.getElementById("itemId").value;
-const qty = document.getElementById("quantity").value;
-const date = document.getElementById("orderDate").value;
-const status = document.getElementById("status").value;
-const editing = document.getElementById("editingId").value;
+          const id = document.getElementById("orderId").value;
+          const customer = document.getElementById("customerId").value;
+          const item = document.getElementById("itemId").value;
+          const qty = document.getElementById("quantity").value;
+          const date = document.getElementById("orderDate").value;
+          const status = document.getElementById("status").value;
+          const editing = document.getElementById("editingId").value;
 
-if (editing) {
-const { error } = await db.from("orders")
-.update({ customer_id: customer, item_id: item, quantity: qty, order_date: date, status })
-.eq("id", editing);
-if (error) { alert("Error: " + error.message); return; }
-cancelEdit();
-} else {
-const { error } = await db.from("orders")
-.insert([{ id, customer_id: customer, item_id: item, quantity: qty, order_date: date, status }]);
-if (error) { alert("Error: " + error.message); return; }
-document.getElementById("orderForm").reset();
-}
+          if (editing) {
+            const { error } = await db
+              .from("orders")
+              .update({
+                customer_id: customer,
+                item_id: item,
+                quantity: qty,
+                order_date: date,
+                status,
+              })
+              .eq("id", editing);
+            if (error) {
+              alert("Error: " + error.message);
+              return;
+            }
+            cancelEdit();
+          } else {
+            const { error } = await db
+              .from("orders")
+              .insert([
+                {
+                  id,
+                  customer_id: customer,
+                  item_id: item,
+                  quantity: qty,
+                  order_date: date,
+                  status,
+                },
+              ]);
+            if (error) {
+              alert("Error: " + error.message);
+              return;
+            }
+            document.getElementById("orderForm").reset();
+          }
 
-loadOrders();
-});
+          loadOrders();
+        });
 
-// DELETE ORDER
-async function deleteOrder(id) {
-if (!confirm(`Delete order #${id}?`)) return;
-const { error } = await db.from("orders").delete().eq("id", id);
-if (error) { alert("Error: " + error.message); return; }
-loadOrders();
-}
+      // DELETE ORDER
+      async function deleteOrder(id) {
+        if (!confirm(`Delete order #${id}?`)) return;
+        const { error } = await db.from("orders").delete().eq("id", id);
+        if (error) {
+          alert("Error: " + error.message);
+          return;
+        }
+        loadOrders();
+      }
 
-// EDIT ORDER
-function editOrder(id, customer, item, qty, date, status) {
-document.getElementById("orderId").value = id;
-document.getElementById("customerId").value = customer;
-document.getElementById("itemId").value = item;
-document.getElementById("quantity").value = qty;
-document.getElementById("orderDate").value = date;
-document.getElementById("status").value = status;
-document.getElementById("editingId").value = id;
-document.getElementById("orderId").disabled = true;
-document.getElementById("submitBtn").textContent = "Update Order";
-document.getElementById("cancelBtn").style.display = "block";
-document.getElementById("formTitle").textContent = "Edit Order";
-}
+      // EDIT ORDER
+      function editOrder(id, customer, item, qty, date, status) {
+        document.getElementById("orderId").value = id;
+        document.getElementById("customerId").value = customer;
+        document.getElementById("itemId").value = item;
+        document.getElementById("quantity").value = qty;
+        document.getElementById("orderDate").value = date;
+        document.getElementById("status").value = status;
+        document.getElementById("editingId").value = id;
+        document.getElementById("orderId").disabled = true;
+        document.getElementById("submitBtn").textContent = "Update Order";
+        document.getElementById("cancelBtn").style.display = "block";
+        document.getElementById("formTitle").textContent = "Edit Order";
+      }
 
-// CANCEL EDIT
-function cancelEdit() {
-document.getElementById("orderForm").reset();
-document.getElementById("editingId").value = "";
-document.getElementById("orderId").disabled = false;
-document.getElementById("submitBtn").textContent = "Add Order";
-document.getElementById("cancelBtn").style.display = "none";
-document.getElementById("formTitle").textContent = "New Order";
-}
+      // CANCEL EDIT
+      function cancelEdit() {
+        document.getElementById("orderForm").reset();
+        document.getElementById("editingId").value = "";
+        document.getElementById("orderId").disabled = false;
+        document.getElementById("submitBtn").textContent = "Add Order";
+        document.getElementById("cancelBtn").style.display = "none";
+        document.getElementById("formTitle").textContent = "New Order";
+      }
 
-// START
-loadOrders();
-</script>
-
-</body>
+      // START
+      loadOrders();
+    </script>
+  </body>
 </html>
