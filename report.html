@@ -23,55 +23,64 @@
     <h1>Project Report</h1>
     <p class="subtitle">System documentation and design overview</p>
 
-
     <div class="card">
         <h2>Overview</h2>
         <p>
-            StockBase is a database-driven inventory and order management system.
-            It allows users to manage items and orders using a web interface connected to Supabase.
+            StockBase is a database-driven inventory and order management system built as a
+            first-year group project at Technological University Dublin. It allows users to
+            manage items and orders through a multi-page web interface connected to a live
+            Supabase (PostgreSQL) database.
+        </p>
+        <p style="margin-top: 10px;">
+            The system was designed to demonstrate full CRUD functionality across multiple
+            database tables, with a focus on clean UI, real-time data updates, and a
+            consistent user experience across all pages. Each page handles its own
+            database operations independently using the Supabase JavaScript client.
+        </p>
+        <p style="margin-top: 10px;">
+            The project was built collaboratively across five team members, with each member
+            taking ownership of a specific section of the system.
         </p>
     </div>
-
 
     <div class="card">
         <h2>Features</h2>
         <ul>
             <li>Manage items (Add, Edit, Delete)</li>
-            <li>Manage orders</li>
-            <li>Dashboard statistics</li>
-            <li>Real-time database updates</li>
+            <li>Manage orders (Add, Edit, Delete)</li>
+            <li>Dashboard statistics pulled live from the database</li>
+            <li>Real-time data updates via Supabase JavaScript client</li>
+            <li>Consistent navigation and UI across all pages</li>
         </ul>
     </div>
-
 
     <div class="card">
         <h2>CRUD Functionality</h2>
         <table>
             <tr><th>Operation</th><th>Description</th></tr>
-            <tr><td>Create</td><td>Add items/orders via forms</td></tr>
-            <tr><td>Read</td><td>Display data in tables</td></tr>
-            <tr><td>Update</td><td>Edit existing data</td></tr>
-            <tr><td>Delete</td><td>Remove records</td></tr>
+            <tr><td>Create</td><td>Add new items and orders via forms on each page</td></tr>
+            <tr><td>Read</td><td>Display live data from Supabase in formatted tables</td></tr>
+            <tr><td>Update</td><td>Edit existing records using pre-filled forms</td></tr>
+            <tr><td>Delete</td><td>Remove records from the database with confirmation</td></tr>
         </table>
     </div>
-
 
     <div class="card">
         <h2>Database Tables</h2>
         <table>
             <tr><th>Table</th><th>Description</th></tr>
-            <tr><td>Items</td><td>Stores item data</td></tr>
-            <tr><td>Orders</td><td>Stores order data</td></tr>
-            <tr><td>Categories</td><td>Stores categories</td></tr>
+            <tr><td>Items</td><td>Stores item ID, name, category, price and stock quantity</td></tr>
+            <tr><td>Orders</td><td>Stores order ID, customer ID, item ID, quantity, date and status</td></tr>
+            <tr><td>Categories</td><td>Stores category IDs and names linked to items</td></tr>
         </table>
     </div>
 
     <div class="card">
         <h2>Technologies</h2>
         <ul>
-            <li>HTML, CSS, JavaScript</li>
-            <li>Supabase</li>
-            <li>GitHub</li>
+            <li>HTML, CSS, JavaScript — frontend structure, styling and logic</li>
+            <li>Supabase — hosted PostgreSQL database with a JavaScript client for real-time CRUD</li>
+            <li>GitHub — version control and team collaboration</li>
         </ul>
     </div>
 
@@ -79,20 +88,19 @@
         <h2>Team Contributions</h2>
         <table>
             <tr><th>Name</th><th>Role</th></tr>
-            <tr><td>cezary</td><td>Dashboard</td></tr>
-            <tr><td>Akaishanox</td><td>Items</td></tr>
-            <tr><td>yusufmasood</td><td>Orders</td></tr>
-            <tr><td>cezary</td><td>Database</td></tr>
-            <tr><td>abdul and jamiu</td><td>Report</td></tr>
+            <tr><td>Cezary</td><td>Dashboard & Database setup</td></tr>
+            <tr><td>Akaishanox</td><td>Items page</td></tr>
+            <tr><td>Yusufmasood</td><td>Orders page</td></tr>
+            <tr><td>Abdul & Jamiu</td><td>Report page</td></tr>
         </table>
     </div>
 
     <div class="card">
         <h2>Challenges</h2>
         <ul>
-            <li>Connecting frontend to Supabase</li>
-            <li>Handling async data</li>
-            <li>Managing edit vs add logic</li>
+            <li>Connecting the frontend to Supabase — configuring the correct URL, API key and understanding how the JavaScript client works took initial research and testing.</li>
+            <li>Handling async data — ensuring the page waited for Supabase responses before rendering the table required careful use of async/await throughout the code.</li>
+            <li>Managing edit vs add logic — using a single form for both adding and editing meant tracking state carefully so the correct database operation was triggered.</li>
         </ul>
     </div>
 
