@@ -3,22 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report</title>
+    <title>Project Report</title>
+    <link rel="stylesheet" href="report.css">
 </head>
 <body>
-    <nav>
-        <span class="nav-brand">📦 StockBase</span>
+
+<nav>
+    <span class="nav-brand">📦 StockBase</span>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="items.html">Items</a></li>
+        <li><a href="orders.html">Orders</a></li>
+        <li><a href="report.html" class="active">Report</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+    <h1>Project Report</h1>
+    <p class="subtitle">System documentation and design overview</p>
+
+
+    <div class="card">
+        <h2>Overview</h2>
+        <p>
+            StockBase is a database-driven inventory and order management system.
+            It allows users to manage items and orders using a web interface connected to Supabase.
+        </p>
+    </div>
+
+
+    <div class="card">
+        <h2>Features</h2>
         <ul>
-            <li><a href="index.html" class="active">Home</a></li>
-            <li><a href="items.html">Items</a></li>
-            <li><a href="orders.html">Orders</a></li>
-            <li><a href="report.html">Reports</a></li>
+            <li>Manage items (Add, Edit, Delete)</li>
+            <li>Manage orders</li>
+            <li>Dashboard statistics</li>
+            <li>Real-time database updates</li>
         </ul>
-    </nav>
-    <h1>Report</h1>
-    <p> StockBase is a web-based inventory and order management system designed to allow users to manage items, categories, and customer orders through an intuitive interface.
-        The application integrates a frontend built using HTML, CSS, and JavaScript with a backend database powered by Supabase
-        The aim of the project is to demonstrate the development of a database-driven web application that supports full CRUD (Create, Read, Update, Delete) functionality while maintaining a clean and user-friendly design.
-    </p>
+    </div>
+
+
+    <div class="card">
+        <h2>CRUD Functionality</h2>
+        <table>
+            <tr><th>Operation</th><th>Description</th></tr>
+            <tr><td>Create</td><td>Add items/orders via forms</td></tr>
+            <tr><td>Read</td><td>Display data in tables</td></tr>
+            <tr><td>Update</td><td>Edit existing data</td></tr>
+            <tr><td>Delete</td><td>Remove records</td></tr>
+        </table>
+    </div>
+
+
+    <div class="card">
+        <h2>Database Tables</h2>
+        <table>
+            <tr><th>Table</th><th>Description</th></tr>
+            <tr><td>Items</td><td>Stores item data</td></tr>
+            <tr><td>Orders</td><td>Stores order data</td></tr>
+            <tr><td>Categories</td><td>Stores categories</td></tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Technologies</h2>
+        <ul>
+            <li>HTML, CSS, JavaScript</li>
+            <li>Supabase</li>
+            <li>GitHub</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Team Contributions</h2>
+        <table>
+            <tr><th>Name</th><th>Role</th></tr>
+            <tr><td>cezary</td><td>Dashboard</td></tr>
+            <tr><td>Akaishanox</td><td>Items</td></tr>
+            <tr><td>yusufmasood</td><td>Orders</td></tr>
+            <tr><td>cezary</td><td>Database</td></tr>
+            <tr><td>abdul and jamiu</td><td>Report</td></tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Challenges</h2>
+        <ul>
+            <li>Connecting frontend to Supabase</li>
+            <li>Handling async data</li>
+            <li>Managing edit vs add logic</li>
+        </ul>
+    </div>
+
+</div>
+
 </body>
 </html>
