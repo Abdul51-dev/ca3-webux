@@ -48,7 +48,7 @@
           <input type="hidden" id="editingId" />
 
           <label>Order ID</label>
-          <input type="number" id="orderId" placeholder="e.g. 1001" required />
+          <input type="number" id="orderId" placeholder="Auto generated" disabled />
 
           <div class="row2">
             <div>
@@ -162,7 +162,10 @@
         document.getElementById("tableBody").innerHTML =
           `<tr><td colspan="7" class="empty-cell">Loading…</td></tr>`;
 
-        const { data, error } = await db.from("orders").select("*").order("id");
+          const { data, error } = await db
+          .from("orders")
+          .select("*, items(name)")
+          .order("id");
 
         if (error) {
           document.getElementById("tableBody").innerHTML =
@@ -193,7 +196,7 @@
 <tr>
 <td><span class="id-tag">${o.id}</span></td>
 <td>${o.customer_id}</td>
-<td>${o.item_id}</td>
+<td>${o.items ? o.items.name : o.item_id}</td>
 <td>${o.quantity}</td>
 <td>${o.order_date || "—"}</td>
 <td>${badge(o.status)}</td>
@@ -242,7 +245,6 @@
               .from("orders")
               .insert([
                 {
-                  id,
                   customer_id: customer,
                   item_id: item,
                   quantity: qty,
