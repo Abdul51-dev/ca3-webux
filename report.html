@@ -14,7 +14,7 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="items.html">Items</a></li>
         <li><a href="orders.html">Orders</a></li>
-        <li><a href="report.html" class="active">Report</a></li>
+        <li><a href="report.html" class="active">Reports</a></li>
     </ul>
 </nav>
 
@@ -52,6 +52,11 @@
             <li>Real-time data updates via Supabase JavaScript client</li>
             <li>Consistent navigation and UI across all pages</li>
         </ul>
+        <p style="margin-top:10px;">
+    The system uses a consistent navigation bar across all pages, allowing users
+    to move between the Home, Items, Orders, and Report pages easily. This
+    improves usability and ensures a smooth user experience.
+</p>
     </div>
 
     <div class="card">
@@ -63,10 +68,39 @@
             <tr><td>Update</td><td>Edit existing records using pre-filled forms</td></tr>
             <tr><td>Delete</td><td>Remove records from the database with confirmation</td></tr>
         </table>
+
+        <p style="margin-top:10px;">
+    The system fully supports CRUD operations. Users can add, edit, and delete
+    both items and orders through forms. When editing, the form is pre-filled
+    with existing data to make updates easier.
+</p>
+
+<p>
+    Validation is also implemented to ensure that all required fields are filled
+    before submission. This prevents invalid or incomplete data from being added
+    to the database.
+</p>
     </div>
 
     <div class="card">
         <h2>Database Tables</h2>
+        <p style="margin-top:10px;">
+    The system uses three related tables: categories, items, and orders.
+    The categories table stores category names, while the items table links
+    to categories using a category_id field. This creates a one-to-many
+    relationship, where one category can contain multiple items.
+</p>
+
+<p>
+    The orders table links to the items table using item_id. This allows
+    the system to track which items are being ordered. One item can appear
+    in multiple orders, forming another one-to-many relationship.
+</p>
+<p>
+    These relationships ensure that data is organised efficiently and avoids
+    duplication. The structure allows the system to display meaningful
+    information such as item names and category names instead of just IDs.
+</p>
         <table>
             <tr><th>Table</th><th>Description</th></tr>
             <tr><td>Items</td><td>Stores item ID, name, category, price and stock quantity</td></tr>
@@ -89,7 +123,7 @@
         <table>
             <tr><th>Name</th><th>Role</th></tr>
             <tr><td>Cezary</td><td>Dashboard & Database setup</td></tr>
-            <tr><td>Akaishanox</td><td>Items page</td></tr>
+            <tr><td>Akaisha</td><td>Items page</td></tr>
             <tr><td>Yusufmasood</td><td>Orders page</td></tr>
             <tr><td>Abdul & Jamiu</td><td>Report page</td></tr>
         </table>
@@ -101,6 +135,7 @@
             <li>Connecting the frontend to Supabase — configuring the correct URL, API key and understanding how the JavaScript client works took initial research and testing.</li>
             <li>Handling async data — ensuring the page waited for Supabase responses before rendering the table required careful use of async/await throughout the code.</li>
             <li>Managing edit vs add logic — using a single form for both adding and editing meant tracking state carefully so the correct database operation was triggered.</li>
+            <li>Ensuring consistent styling across all pages — small differences in CSS caused layout issues, which were fixed by standardising navigation styling.</li>
         </ul>
     </div>
 
