@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="items.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
-<n>
+<body>
     <nav>
         <span class="nav-brand">📦 StockBase</span>
       <ul>
         <li><a href="index.html">Home</a></li>
-        <li><a href="items.html">Items</a></li>
+        <li><a href="items.html" class="active">Items</a></li>
         <li><a href="orders.html">Orders</a></li>
-        <li><a href="report.html">Report</a></li>
+        <li><a href="report.html">Reports</a></li>
       </ul>
     </nav>
 
@@ -101,9 +101,9 @@
 
             try {
                 const { data, error } = await client
-                    .from("items")
-                    .select("*")
-                    .order("id", { ascending: true });
+                .from("items")
+                .select("*, categories(name)")
+                .order("id", { ascending: true });
 
                 if (error) {
                     tableBody.innerHTML = "<tr><td colspan='6'>Error: " + error.message + "</td></tr>";
@@ -124,7 +124,7 @@
                     row.innerHTML = `
                         <td>${item.id}</td>
                         <td>${item.name}</td>
-                        <td>${item.category_id}</td>
+                        <td>${item.categories ? item.categories.name : item.category_id}</td>
                         <td>€${parseFloat(item.price).toFixed(2)}</td>
                         <td>${stockBadge(item.quantity)}</td>
                         <td>
