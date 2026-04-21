@@ -14,7 +14,7 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="items.html">Items</a></li>
         <li><a href="orders.html">Orders</a></li>
-        <li><a href="report.html" class="active">Reports</a></li>
+        <li><a href="report.html" class="active">Report</a></li>
     </ul>
 </nav>
 
@@ -109,6 +109,46 @@
         </table>
     </div>
 
+<div class="card">
+    <h2>Database Implementation</h2>
+
+    <p>
+        The database was implemented using Supabase. The system uses three main tables:
+        categories, items, and orders, each storing different parts of the system data.
+    </p>
+
+    <p>Categories table:</p>
+    <img src="images/categories-table.png" alt="Categories table screenshot" style="width:100%; margin-bottom:12px; border-radius:8px;">
+    
+    <img src="images/items-table.png" alt="Items table screenshot" style="width:100%; margin-bottom:12px; border-radius:8px;">
+    
+    <img src="images/orders-table.png" alt="Orders table screenshot" style="width:100%; margin-bottom:12px; border-radius:8px;">
+</div>
+
+    <div class="card">
+    <h2>Entity Relationship Diagram (ERD)</h2>
+    <p>
+        The ERD shows how the database tables are connected. Each category can have multiple items, 
+        and each item can appear in multiple orders. These relationships are represented as one-to-many (1:M).
+    </p>
+
+    <img src="images/erd.png" alt="ERD Diagram" 
+         style="width:100%; margin-top:10px; background:white; padding:10px; border-radius:8px;">
+    </div>
+
+        <div class="card">
+    <h2>System Screenshots</h2>
+
+    <p>Home dashboard:</p>
+    <img src="images/home-page.png" alt="Home dashboard screenshot" style="width:100%; margin-bottom:12px; border-radius:8px;">
+
+    <p>Items management page:</p>
+    <img src="images/items-page.png" alt="Items management page screenshot" style="width:100%; margin-bottom:12px; border-radius:8px;">
+
+    <p>Orders management page:</p>
+    <img src="images/orders-page.png" alt="Orders management page screenshot" style="width:100%; margin-bottom:12px; border-radius:8px;">
+    </div>
+
     <div class="card">
         <h2>Technologies</h2>
         <ul>
@@ -123,7 +163,7 @@
         <table>
             <tr><th>Name</th><th>Role</th></tr>
             <tr><td>Cezary</td><td>Dashboard & Database setup</td></tr>
-            <tr><td>Akaisha</td><td>Items page</td></tr>
+            <tr><td>Akaisha</td><td>Items page, Orders Database & ERD</td></tr>
             <tr><td>Yusufmasood</td><td>Orders page</td></tr>
             <tr><td>Abdul & Jamiu</td><td>Report page</td></tr>
         </table>
@@ -138,6 +178,16 @@
             <li>Ensuring consistent styling across all pages — small differences in CSS caused layout issues, which were fixed by standardising navigation styling.</li>
         </ul>
     </div>
+
+    <div class="card">
+    <h2>Conclusion</h2>
+    <p>
+        In conclusion, StockBase demonstrates a working database-driven web application
+        with multiple related tables, full CRUD functionality, and a consistent user
+        interface across all pages. The project shows how Supabase can be used to store,
+        manage, and display live data in a simple and effective way.
+    </p>
+</div>
 
 </div>
 
